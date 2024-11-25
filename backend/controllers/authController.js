@@ -168,58 +168,60 @@ const forgotPassword = async (req, res) => {
     }
   };
   
-
-const registerManager = async (req, res) => {
-    const { email, password, role } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Please provide email and password.' });
+  const registerManager = async (req, res) => {
+    const { email, password, username, role } = req.body;
+  
+    if (!email || !password || !username) {
+      return res.status(400).json({ message: 'Please provide email, password, and username.' });
     }
-
+  
     try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already taken.' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ email, password: hashedPassword, role: role || 'manager' });
-        await newUser.save();
-
-        const token = jwt.sign({ userId: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.status(201).json({ token, message: 'Manager registration successful.' });
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already taken.' });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({ email, password: hashedPassword, username, role: role || 'manager' });
+      await newUser.save();
+  
+      const token = jwt.sign({ userId: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: '1h' });
+      res.status(201).json({ token, message: 'Manager registration successful.' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error during registration.' });
+      console.error(error);
+      res.status(500).json({ message: 'Server error during registration.' });
     }
-};
-
-const editManager = async (req, res) => {
+  };
+  
+  // Edit an existing manager
+  const editManager = async (req, res) => {
     const { id } = req.params;
-    const { email, password, role } = req.body;
-
-    if (!email && !password && !role) {
-        return res.status(400).json({ message: 'Please provide data to update (email, password, or role).' });
+    const { email, password, username, role } = req.body;
+  
+    if (!email && !password && !username && !role) {
+      return res.status(400).json({ message: 'Please provide data to update (email, password, username, or role).' });
     }
-
+  
     try {
-        const manager = await User.findById(id);
-        if (!manager) {
-            return res.status(404).json({ message: 'Manager not found.' });
-        }
-
-        if (email) manager.email = email;
-        if (password) manager.password = await bcrypt.hash(password, 10);
-        if (role) manager.role = role;
-
-        await manager.save();
-
-        res.status(200).json({ message: 'Manager updated successfully.' });
+      const manager = await User.findById(id);
+      if (!manager) {
+        return res.status(404).json({ message: 'Manager not found.' });
+      }
+  
+      if (email) manager.email = email;
+      if (password) manager.password = await bcrypt.hash(password, 10);
+      if (username) manager.username = username;  // Update username
+      if (role) manager.role = role;
+  
+      await manager.save();
+  
+      res.status(200).json({ message: 'Manager updated successfully.' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error during manager update.' });
+      console.error(error);
+      res.status(500).json({ message: 'Server error during manager update.' });
     }
-};
+  };
+
 
 const deleteManager = async (req, res) => {
     const { id } = req.params;
@@ -238,10 +240,10 @@ const deleteManager = async (req, res) => {
 };
 
 const registerOperator = async (req, res) => {
-    const { email, password, role } = req.body;
+    const { email, password, username, role } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Please provide email and password.' });
+    if (!email || !password || !username) {
+        return res.status(400).json({ message: 'Please provide email, password, and username.' });
     }
 
     try {
@@ -251,7 +253,7 @@ const registerOperator = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ email, password: hashedPassword, role: role || 'operator' });
+        const newUser = new User({ email, password: hashedPassword, username, role: role || 'operator' });
         await newUser.save();
 
         const token = jwt.sign({ userId: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: '1h' });
@@ -262,12 +264,13 @@ const registerOperator = async (req, res) => {
     }
 };
 
+
 const editOperator = async (req, res) => {
     const { id } = req.params;
-    const { email, password, role } = req.body;
+    const { email, password, username, role } = req.body;
 
-    if (!email && !password && !role) {
-        return res.status(400).json({ message: 'Please provide data to update (email, password, or role).' });
+    if (!email && !password && !username && !role) {
+        return res.status(400).json({ message: 'Please provide data to update (email, password, username, or role).' });
     }
 
     try {
@@ -278,6 +281,7 @@ const editOperator = async (req, res) => {
 
         if (email) operator.email = email;
         if (password) operator.password = await bcrypt.hash(password, 10);
+        if (username) operator.username = username;  // Update username
         if (role) operator.role = role;
 
         await operator.save();
@@ -304,6 +308,7 @@ const deleteOperator = async (req, res) => {
         res.status(500).json({ message: 'Server error during operator deletion.' });
     }
 };
+
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;

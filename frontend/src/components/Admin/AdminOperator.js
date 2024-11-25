@@ -8,6 +8,7 @@ import "../assets/style/ManageFoods.css";
 export default function AdminOperator() {
   const [operators, setOperators] = useState([]);
   const [formData, setFormData] = useState({
+    email: "",
     username: "",
     password: "",
     role: "operator",
@@ -42,13 +43,13 @@ export default function AdminOperator() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.password) {
-      toast.error("Password is required!");
+    if (!formData.password || !formData.email) {
+      toast.error("Email and Password are required!");
       return;
     }
 
-    const { username, password, role } = formData;
-    const dataToSend = { username, password, role };
+    const { email, username, password, role } = formData;
+    const dataToSend = { email, username, password, role };
 
     if (editingId) {
       try {
@@ -89,12 +90,12 @@ export default function AdminOperator() {
       }
     }
 
-    setFormData({ username: "", password: "", role: "operator" });
+    setFormData({ email: "", username: "", password: "", role: "operator" });
   };
 
   const handleEdit = (id) => {
     const operator = operators.find((operator) => operator._id === id);
-    setFormData({ username: operator.username, password: "" });
+    setFormData({ email: operator.email, username: operator.username, password: "" });
     setEditingId(id);
   };
 
@@ -128,6 +129,15 @@ export default function AdminOperator() {
             </p>
 
             <div className="input-wrapper">
+              <input
+                type="email"
+                name="email"
+                placeholder="Operator Email"
+                value={formData.email}
+                onChange={handleChange}
+                className="input-field input-field1"
+                required
+              />
               <input
                 type="text"
                 name="username"
@@ -176,6 +186,7 @@ export default function AdminOperator() {
           >
             <thead style={{ backgroundColor: "var(--white)" }}>
               <tr>
+                <th>Email</th>
                 <th>Username</th>
                 <th>Password</th>
                 <th>Actions</th>
@@ -184,6 +195,7 @@ export default function AdminOperator() {
             <tbody>
               {operators.map((operator) => (
                 <tr key={operator._id}>
+                  <td>{operator.email}</td>
                   <td>{operator.username}</td>
                   <td>*****</td>
                   <td>
@@ -214,4 +226,3 @@ export default function AdminOperator() {
     </section>
   );
 }
-

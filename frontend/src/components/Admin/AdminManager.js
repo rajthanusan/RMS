@@ -8,13 +8,13 @@ import "../assets/style/ManageFoods.css";
 export default function AdminManager() {
   const [managers, setManagers] = useState([]);
   const [formData, setFormData] = useState({
+    email: "",
     username: "",
     password: "",
-    role: "manager",  
+    role: "manager",
   });
   const [editingId, setEditingId] = useState(null);
 
-   
   useEffect(() => {
     const fetchManagers = async () => {
       try {
@@ -29,16 +29,12 @@ export default function AdminManager() {
       }
     };
 
-     
     fetchManagers();
-
-     
     const intervalId = setInterval(fetchManagers, 5000);
 
-     
     return () => clearInterval(intervalId);
   }, []);
-   
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -46,22 +42,18 @@ export default function AdminManager() {
     });
   };
 
-   
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-     
-    if (!formData.password) {
-      toast.error("Password is required!");
+    if (!formData.password || !formData.username) {
+      toast.error("Username and password are required!");
       return;
     }
 
-    const { username, password, role } = formData;
+    const { email, username, password, role } = formData;
 
-     
-    const dataToSend = { username, password, role };
+    const dataToSend = { email, username, password, role };
 
-     
     if (editingId) {
       try {
         const response = await axios.put(
@@ -74,7 +66,7 @@ export default function AdminManager() {
           )
         );
         toast.success("Manager updated successfully!");
-        setEditingId(null);  
+        setEditingId(null);
       } catch (error) {
         console.error("Error updating manager:", error);
         toast.error(
@@ -84,12 +76,8 @@ export default function AdminManager() {
         );
       }
     } else {
-       
       try {
-        const response = await axios.post(
-          "/auth/register-manager",  
-          dataToSend
-        );
+        const response = await axios.post("/auth/register-manager", dataToSend);
         setManagers((prevManagers) => [...prevManagers, response.data]);
         toast.success("Manager added successfully!");
       } catch (error) {
@@ -102,18 +90,15 @@ export default function AdminManager() {
       }
     }
 
-     
-    setFormData({ username: "", password: "", role: "manager" });
+    setFormData({ email: "", username: "", password: "", role: "manager" });
   };
 
-   
   const handleEdit = (id) => {
     const manager = managers.find((manager) => manager._id === id);
-    setFormData({ username: manager.username, password: "" });
+    setFormData({ email: manager.email, username: manager.username, password: "" });
     setEditingId(id);
   };
 
-   
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/auth/users/${id}`);
@@ -139,8 +124,17 @@ export default function AdminManager() {
 
             <div className="input-wrapper">
               <input
+                type="email"
+                name="email"
+                placeholder="Manager Email"
+                value={formData.email}
+                onChange={handleChange}
+                className="input-field input-field1"
+                required
+              />
+              <input
                 type="text"
-                name="username"
+                name="username"  // Add username input field
                 placeholder="Manager Username"
                 value={formData.username}
                 onChange={handleChange}
@@ -162,9 +156,6 @@ export default function AdminManager() {
               <span className="text text-1">
                 {editingId ? "Update Manager" : "Add Manager"}
               </span>
-              <span className="text text-2" aria-hidden="true">
-                {editingId ? "Update Manager" : "Add Manager"}
-              </span>
             </button>
           </form>
         </div>
@@ -174,13 +165,11 @@ export default function AdminManager() {
           <h2 className="headline-1 text-center" style={{ color: "var(--gold-crayola)" }}>
             Manager List
           </h2>
-          <table
-            className="table"
-            style={{ backgroundColor: "var(--white)", color: "var(--smoky-black-2)" }}
-          >
+          <table className="table" style={{ backgroundColor: "var(--white)", color: "var(--smoky-black-2)" }}>
             <thead style={{ backgroundColor: "var(--white)" }}>
               <tr>
-                <th>Username</th>
+                <th>Email</th>
+                <th>Username</th> {/* Display Username */}
                 <th>Password</th>
                 <th>Actions</th>
               </tr>
@@ -188,17 +177,16 @@ export default function AdminManager() {
             <tbody>
               {managers.map((manager) => (
                 <tr key={manager._id}>
-                  <td>{manager.username}</td>
+                  <td>{manager.email}</td>
+                  <td>{manager.username}</td> {/* Display Username */}
                   <td>********</td> {/* Masked password for security */}
                   <td>
                     <FaEdit
-                      style={{  fontSize: "2rem",
-                      cursor: "pointer",marginRight:"1.5rem"}}
+                      style={{ fontSize: "2rem", cursor: "pointer", marginRight: "1.5rem" }}
                       onClick={() => handleEdit(manager._id)}
                     />
                     <FaTrash
-                      style={{ fontSize: "2rem",
-                      cursor: "pointer", color: "var(--danger)" }}
+                      style={{ fontSize: "2rem", cursor: "pointer", color: "var(--danger)" }}
                       onClick={() => handleDelete(manager._id)}
                     />
                   </td>
