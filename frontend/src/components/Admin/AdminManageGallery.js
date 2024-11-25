@@ -100,7 +100,7 @@ export default function AdminManageGallery() {
  
 const deleteImage = async (id) => {
   try {
-    const response = await axios.delete(`/api/images/${id}`);
+    await axios.delete(`/api/images/${id}`); 
     setImages(images.filter((image) => image._id !== id));  
     toast.success('Image deleted successfully!');
   } catch (error) {
@@ -108,6 +108,7 @@ const deleteImage = async (id) => {
     toast.error('Error deleting image!');
   }
 };
+
 
 
   return (

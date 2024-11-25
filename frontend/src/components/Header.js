@@ -1,34 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { IoCloseOutline } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
 import logo from './assets/images/features-icon-3.png';
 
 export default function Header({ isHeaderVisible, role }) {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [, setIsLoggedIn] = useState(false);
 
-   
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const userRole = localStorage.getItem('userRole');
-     
     if (token && userRole === role) {
       setIsLoggedIn(true);
     }
-  }, [role]);
-
-  const handleLoginClick = () => {
-    navigate('/Login');
-  };
-
-  const handleLogoutClick = () => {
-    localStorage.removeItem('authToken');  
-    localStorage.removeItem('userRole');  
-    setIsLoggedIn(false);  
-    navigate('/');  
-  };
-
-
+  }, [role]); 
   return (
     <header className={`header ${isHeaderVisible ? '' : 'hidden'}`}>
       <div className="container">
@@ -44,8 +27,7 @@ export default function Header({ isHeaderVisible, role }) {
           <a href="/" className="logo">
             <img src="./assets/images/logo.svg" width="160" height="50" alt="RMS - Home" />
           </a>
-
-         </nav>
+        </nav>
       </div>
     </header>
   );

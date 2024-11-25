@@ -13,7 +13,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [linkColor, setLinkColor] = useState("white");
-  const [isTopbarVisible, setIsTopbarVisible] = useState(true);
+  const [isTopbarVisible] = useState(true);
 
   const handleRegister = async (e) => {
     e.preventDefault();

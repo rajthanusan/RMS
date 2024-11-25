@@ -11,8 +11,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [linkColor, setLinkColor] = useState("white");
-  const [isTopbarVisible, setIsTopbarVisible] = useState(true);
+  const [isTopbarVisible] = useState(true);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -65,8 +64,7 @@ export default function Login() {
     }
   };
 
-  const handleMouseEnter = () => setLinkColor("hsl(38, 61%, 73%)");
-  const handleMouseLeave = () => setLinkColor("white");
+
 
   return (
     <section className="login">

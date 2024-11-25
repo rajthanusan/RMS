@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FaTrash, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import '../assets/style/ManageFoods.css';
 import AdminUser from './AdminUser';
 import AdminManager from './AdminManager';

@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require("google-auth-library");
 const nodemailer = require('nodemailer');
+const { sendWelcomeEmail } = require('../services/emailService');
+
 
 const JWT_SECRET = process.env.JWT_SECRET || '12343211223344';
 
@@ -129,33 +131,43 @@ const forgotPassword = async (req, res) => {
     }
   };
       
-
-const registerUser = async (req, res) => {
+  const registerUser = async (req, res) => {
     const { email, password, username, role } = req.body;
-
+  
     try {
-         
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already taken' });
-        }
-
-         
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-         
-        const newUser = new User({ email, password: hashedPassword, username, role });
-        await newUser.save();
-
-         
-        const token = jwt.sign({ userId: newUser._id, role: newUser.role }, process.env.JWT_SECRET || 'your_jwt_secret', { expiresIn: '1h' });
-
-        res.status(201).json({ token, message: 'User registered successfully.' });
+       
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already taken' });
+      }
+  
+       
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({ email, password: hashedPassword, username, role });
+      await newUser.save();
+  
+       
+      const token = jwt.sign(
+        { userId: newUser._id, role: newUser.role },
+        process.env.JWT_SECRET || 'your_jwt_secret',
+        { expiresIn: '1h' }
+      );
+  
+       
+      res.status(201).json({ token, message: 'User registered successfully.' });
+  
+       
+      sendWelcomeEmail(email);
+  
     } catch (error) {
+      console.error('Error during registration:', error);
+       
+      if (!res.headersSent) {
         res.status(500).json({ message: 'Error during registration.' });
+      }
     }
-};
-
+  };
+  
 
 const registerManager = async (req, res) => {
     const { email, password, role } = req.body;

@@ -31,7 +31,7 @@ function Footer() {
       <div className="container">
         <div className="footer-top grid-list">
           <div className="footer-brand has-before has-after">
-            <a href="#" className="logo">
+            <a href="#home" className="logo">
               <img src={logo} width="160" height="50" loading="lazy" alt="RMS Home" />
             </a>
 
@@ -83,12 +83,13 @@ function Footer() {
 
           {/* Footer Social Links */}
           <ul className="footer-list">
-            <li><a href="#" className="label-2 footer-link hover-underline">Facebook</a></li>
-            <li><a href="#" className="label-2 footer-link hover-underline">Instagram</a></li>
-            <li><a href="#" className="label-2 footer-link hover-underline">Twitter</a></li>
-            <li><a href="#" className="label-2 footer-link hover-underline">YouTube</a></li>
-            <li><a href="https://www.google.com/maps?q=No.+15,+Colombo+Road,+Colombo+00300,+Sri+Lanka" target="_blank" rel="noopener noreferrer" className="label-2 footer-link hover-underline">Google Map</a></li>
-          </ul>
+  <li><button className="label-2 footer-link hover-underline">Facebook</button></li>
+  <li><button className="label-2 footer-link hover-underline">Instagram</button></li>
+  <li><button className="label-2 footer-link hover-underline">Twitter</button></li>
+  <li><button className="label-2 footer-link hover-underline">YouTube</button></li>
+  <li><a href="https://www.google.com/maps?q=No.+15,+Colombo+Road,+Colombo+00300,+Sri+Lanka" target="_blank" rel="noopener noreferrer" className="label-2 footer-link hover-underline">Google Map</a></li>
+</ul>
+
         </div>
 
         {/* Footer Bottom Section */}

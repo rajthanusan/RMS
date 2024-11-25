@@ -62,12 +62,7 @@ export default function Reservation() {
   };
   
    
-  const handleFocus = (fieldName) => {
-    const field = document.querySelector(`select[name="${fieldName}"]`);
-    if (field) {
-      field.focus();
-    }
-  };
+
 
   return (
     <section className="reservation" id="table">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTrash, FaToggleOn, FaToggleOff, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit } from "react-icons/fa";
 import axios from "axios";  
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,11 +10,10 @@ export default function AdminOperator() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "operator",  
+    role: "operator",
   });
   const [editingId, setEditingId] = useState(null);
 
-   
   useEffect(() => {
     const fetchOperators = async () => {
       try {
@@ -29,17 +28,10 @@ export default function AdminOperator() {
       }
     };
 
-     
-    fetchOperators();
-
-     
     const intervalId = setInterval(fetchOperators, 5000);
-
-     
     return () => clearInterval(intervalId);
   }, []);
 
-   
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -47,22 +39,17 @@ export default function AdminOperator() {
     });
   };
 
-   
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-     
     if (!formData.password) {
       toast.error("Password is required!");
       return;
     }
 
     const { username, password, role } = formData;
-
-     
     const dataToSend = { username, password, role };
 
-     
     if (editingId) {
       try {
         const response = await axios.put(
@@ -75,7 +62,7 @@ export default function AdminOperator() {
           )
         );
         toast.success("Operator updated successfully!");
-        setEditingId(null);  
+        setEditingId(null);
       } catch (error) {
         console.error("Error updating operator:", error);
         toast.error(
@@ -85,10 +72,9 @@ export default function AdminOperator() {
         );
       }
     } else {
-       
       try {
         const response = await axios.post(
-          "/auth/register-operator",  
+          "/auth/register-operator",
           dataToSend
         );
         setOperators((prevOperators) => [...prevOperators, response.data]);
@@ -103,18 +89,15 @@ export default function AdminOperator() {
       }
     }
 
-     
     setFormData({ username: "", password: "", role: "operator" });
   };
 
-   
   const handleEdit = (id) => {
     const operator = operators.find((operator) => operator._id === id);
     setFormData({ username: operator.username, password: "" });
     setEditingId(id);
   };
 
-   
   const handleDelete = async (id) => {
     try {
       await axios.delete(`/auth/users/${id}`);
@@ -126,26 +109,21 @@ export default function AdminOperator() {
     }
   };
 
-   
-  const toggleOperatorStatus = (id) => {
-    setOperators(
-      operators.map((operator) =>
-        operator._id === id
-          ? { ...operator, isActive: !operator.isActive }
-          : operator
-      )
-    );
-  };
-
   return (
     <section className="manage-foods">
       <div className="container">
         <div className="form manage-foods-form bg-eerie-black-3">
           <form onSubmit={handleSubmit} className="form-left">
-            <h2 className="headline-1 text-center" style={{ color: "var(--gold-crayola)" }}>
+            <h2
+              className="headline-1 text-center"
+              style={{ color: "var(--gold-crayola)" }}
+            >
               Manage Operators
             </h2>
-            <p className="form-text text-center" style={{ color: "var(--quick-silver)" }}>
+            <p
+              className="form-text text-center"
+              style={{ color: "var(--quick-silver)" }}
+            >
               Add or Edit Operators
             </p>
 
@@ -183,15 +161,23 @@ export default function AdminOperator() {
 
         <br />
         <div className="operator-table form">
-          <h2 className="headline-1 text-center" style={{ color: "var(--gold-crayola)" }}>
+          <h2
+            className="headline-1 text-center"
+            style={{ color: "var(--gold-crayola)" }}
+          >
             Operator List
           </h2>
-          <table className="table" style={{ backgroundColor: "var(--white)", color: "var(--smoky-black-2)" }}>
+          <table
+            className="table"
+            style={{
+              backgroundColor: "var(--white)",
+              color: "var(--smoky-black-2)",
+            }}
+          >
             <thead style={{ backgroundColor: "var(--white)" }}>
               <tr>
                 <th>Username</th>
                 <th>Password</th>
-              
                 <th>Actions</th>
               </tr>
             </thead>
@@ -200,16 +186,21 @@ export default function AdminOperator() {
                 <tr key={operator._id}>
                   <td>{operator.username}</td>
                   <td>*****</td>
-                 
                   <td>
                     <FaEdit
-                      style={{  fontSize: "2rem",
-                      cursor: "pointer",marginRight:"1.5rem"}}
+                      style={{
+                        fontSize: "2rem",
+                        cursor: "pointer",
+                        marginRight: "1.5rem",
+                      }}
                       onClick={() => handleEdit(operator._id)}
                     />
                     <FaTrash
-                      style={{  fontSize: "2rem",
-                      cursor: "pointer", color: "var(--danger)" }}
+                      style={{
+                        fontSize: "2rem",
+                        cursor: "pointer",
+                        color: "var(--danger)",
+                      }}
                       onClick={() => handleDelete(operator._id)}
                     />
                   </td>
@@ -223,3 +214,4 @@ export default function AdminOperator() {
     </section>
   );
 }
+
